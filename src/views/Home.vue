@@ -8,7 +8,7 @@
             <div v-for="(num,realIndex) in realNum" :key="realIndex" class="flow-num">{{num}}</div>
           </div>
           <div class="flow-div flow-today">
-            <div v-for="(num,realIndex) in realNum" :key="realIndex" class="flow-num">{{num}}</div>
+            <div v-for="(num,realIndex) in todayNum" :key="realIndex" class="flow-num">{{num}}</div>
           </div>
         </div>
         <div class="div-sale">
@@ -20,7 +20,14 @@
           </div>
         </div>
       </div>
-      <div class="middle-center"></div>
+      <div class="middle-center">
+        <div class="div-bar">
+          <ve-bar :data="barData" :settings="barSettings" :extend="barExtend" height="300px" width="400px"></ve-bar>
+        </div>
+        <div class="div-heatmap">
+          <ve-heatmap :data="heatmapData" :settings="heatmapSettings" :legend-visible="false"></ve-heatmap>
+        </div>
+      </div>
       <div class="middle-right">
         <div class="div-weather">
           <div class="weather-div">
@@ -32,13 +39,32 @@
               <div class="div-temperature">{{weather.tem1}}/{{weather.tem2}}</div>
             </div>
           </div>
+          <div class="hour-div">
+            <ve-line
+              :data="trendData"
+              width="500px"
+              height="250px"
+              :settings="trendSettings"
+              :legend-visible="false"
+              :extend="trendExtend"
+            ></ve-line>
+          </div>
         </div>
         <div class="div-trend"></div>
       </div>
     </div>
     <div class="home-bottom">
       <div class="bottom-left">
-        <div class="div-sex"></div>
+        <div class="div-sex">
+          <div class="sex-ratio">
+            <div class="ratio-male"></div>
+            <div class="ratio-female"></div>
+          </div>
+          <div class="sex-num">
+            <div class="num-div num-male">{{maleNum}}</div>
+            <div class="num-div num-female">{{femaleNum}}</div>
+          </div>
+        </div>
         <div class="div-age"></div>
       </div>
       <div class="bottom-right"></div>
@@ -61,7 +87,87 @@ export default {
       yesterSale: 2345.67,
       monthSale: 34567.89,
       weathers: [],
-      hours: []
+      hours: [],
+      trendData: {
+        columns: ["日期", "访问用户", "下单用户", "下单率"],
+        rows: [
+          { 日期: "1/1", 访问用户: 1393, 下单用户: 1093, 下单率: 0.32 },
+          { 日期: "1/2", 访问用户: 3530, 下单用户: 3230, 下单率: 0.26 },
+          { 日期: "1/3", 访问用户: 2923, 下单用户: 2623, 下单率: 0.76 },
+          { 日期: "1/4", 访问用户: 1723, 下单用户: 1423, 下单率: 0.49 },
+          { 日期: "1/5", 访问用户: 3792, 下单用户: 3492, 下单率: 0.323 },
+          { 日期: "1/6", 访问用户: 4593, 下单用户: 4293, 下单率: 0.78 }
+        ]
+      },
+      trendSettings: {
+        legendName: ""
+      },
+      trendExtend: {
+        grid: {
+          show: false
+        }
+      },
+      maleNum: 1234,
+      femaleNum: 1221,
+      heatmapData: {
+        columns: ["lat", "lng", "人数"],
+        rows: [
+          { lat: 115.892151, lng: 28.676493, 人数: 1000 },
+          { lat: 117.000923, lng: 36.675807, 人数: 400 },
+          { lat: 113.665412, lng: 34.757975, 人数: 800 },
+          { lat: 114.298572, lng: 30.584355, 人数: 200 },
+          { lat: 112.982279, lng: 28.19409, 人数: 100 },
+          { lat: 113.280637, lng: 23.125178, 人数: 300 },
+          { lat: 110.33119, lng: 20.031971, 人数: 800 },
+          { lat: 104.065735, lng: 30.659462, 人数: 700 },
+          { lat: 108.948024, lng: 34.263161, 人数: 300 },
+          { lat: 103.823557, lng: 36.058039, 人数: 500 }
+        ]
+      },
+      heatmapSettings: {
+        position: "china",
+        type: "map",
+        geo: {
+          label: {
+            emphasis: {
+              show: false
+            }
+          },
+          itemStyle: {
+            normal: {
+              areaColor: "#323c48",
+              borderColor: "#628d4c"
+            },
+            emphasis: {
+              areaColor: "#2a333d"
+            }
+          }
+        }
+      },
+      barData: {
+        columns: ["城市", "人数"],
+        rows: [
+          { 城市: "深圳", 人数: 1393 },
+          { 城市: "广州", 人数: 1300 },
+          { 城市: "上海", 人数: 1293 },
+          { 城市: "北京", 人数: 1193 },
+          { 城市: "杭州", 人数: 1093 },
+          { 城市: "成都", 人数: 993 },
+          { 城市: "武汉", 人数: 893 }
+        ]
+      },
+      barSettings: {
+        dimension: ["城市"],
+        metrics: ["人数"]
+      },
+      barExtend: {
+        series: {
+          barMaxWidth: 12
+        },
+        xAxis: {
+          show: false
+        }
+      }
     };
   },
   async created() {
@@ -74,12 +180,10 @@ export default {
         "iconfont icon-" + this.getWeatherIcon(weather.wea_img);
       weather.monthDay = this.getMonthDay(weather.date);
       weather.dayName = this.getDayName(i, weather.week);
-      if(i == 0){
+      if (i == 0) {
         this.hours = weather.hours;
       }
     }
-
-    
   },
   methods: {
     getWeatherIcon(wea_img) {
@@ -231,9 +335,14 @@ export default {
             width: 71px;
           }
         }
+        .hour-div {
+          overflow: hidden;
+          height: 165px;
+          margin-top: -20px;
+        }
       }
       .div-trend {
-        height: 50%;
+        padding: 0px 60px 0px 22px;
         width: 100%;
       }
     }
@@ -251,6 +360,33 @@ export default {
       .div-sex {
         height: 100%;
         width: 48%;
+        .sex-ratio {
+          display: flex;
+          justify-content: space-between;
+          width: 100%;
+          height: 67%;
+          .ratio-male {
+          }
+          .ratio-female {
+          }
+        }
+        .sex-num {
+          display: flex;
+          justify-content: space-between;
+          font-size: 22px;
+          padding: 30px 75px 0px 111px;
+          .num-male {
+            color: #0b99fd;
+          }
+          .num-female {
+            color: #de6464;
+          }
+          .num-div {
+            width: 137px;
+            text-align: center;
+            padding: 8px 0px 0px 0px;
+          }
+        }
       }
       .div-age {
         height: 100%;
