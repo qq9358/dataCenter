@@ -6,6 +6,20 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "1261637",
+      "name": "female",
+      "font_class": "female",
+      "unicode": "e678",
+      "unicode_decimal": 59000
+    },
+    {
+      "icon_id": "1898881",
+      "name": "male",
+      "font_class": "male",
+      "unicode": "e6d6",
+      "unicode_decimal": 59094
+    },
+    {
       "icon_id": "5874964",
       "name": "沙尘暴",
       "font_class": "shachenbao",
