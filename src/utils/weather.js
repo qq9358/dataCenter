@@ -5,7 +5,7 @@ const ajax = axios.create({
 
 export default{
     async getWeekWeather(){
-        const response = await ajax.get(`https://tianqiapi.com/api?version=v1&appid=85613182&appsecret=qRCDs9lR`);
+        const response = await ajax.get(`http://tianqiapi.com/api?version=v1&appid=85613182&appsecret=qRCDs9lR`);
         return response;
     }
 }

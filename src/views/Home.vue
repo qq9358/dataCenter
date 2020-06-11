@@ -65,6 +65,13 @@
               :legend-visible="false"
               :extend="hoursExtend"
             ></ve-line>
+            <div class="hour-win">
+              <div
+                v-for="(hour,hourIndex) in hoursData.rows"
+                :key="hourIndex"
+                class="win-div"
+              >{{hour.win}}{{hour.win_speed}}</div>
+            </div>
           </div>
         </div>
         <div class="div-trend">
@@ -133,7 +140,13 @@
       </div>
       <div class="bottom-right">
         <div class="check-in">
-          <ve-line :data="checkInData" width="790px" height="330px" :settings="checkInSettings" :extend="checkInExtend"></ve-line>
+          <ve-line
+            :data="checkInData"
+            width="790px"
+            height="330px"
+            :settings="checkInSettings"
+            :extend="checkInExtend"
+          ></ve-line>
         </div>
       </div>
     </div>
@@ -159,16 +172,16 @@ export default {
       monthSale: 34567.89,
       weathers: [],
       hoursData: {
-        columns: ["win", "tem"],
+        columns: ["day", "tem"],
         rows: [
-          { win: "西南风1级", tem: "21" },
-          { win: "西南风2级", tem: "22" },
-          { win: "西南风3级", tem: "33" },
-          { win: "西南风4级", tem: "24" },
-          { win: "西南风5级", tem: "25" },
-          { win: "西南风6级", tem: "36" },
-          { win: "西南风7级", tem: "27" },
-          { win: "西南风8级", tem: "28" }
+          { day: "1", win: "西南风1级", tem: "21" },
+          { day: "2", win: "西南风2级", tem: "22" },
+          { day: "3", win: "西南风3级", tem: "33" },
+          { day: "4", win: "西南风4级", tem: "24" },
+          { day: "5", win: "西南风5级", tem: "25" },
+          { day: "6", win: "西南风6级", tem: "36" },
+          { day: "7", win: "西南风7级", tem: "27" },
+          { day: "8", win: "西南风8级", tem: "28" }
         ]
       },
       hoursSettings: {
@@ -190,7 +203,7 @@ export default {
             formatter: function(params) {
               return params.data[1] + "℃";
             },
-            color: "#de5420"
+            color: "#e9e9e9"
           },
           lineStyle: {
             color: "#de5420"
@@ -396,10 +409,25 @@ export default {
             "28",
             "29",
             "30"
-          ]
+          ],
+          axisTick: {
+            show: false
+          }
         },
         yAxis: {
-          type: "value"
+          type: "value",
+          axisLine: {
+            show: true,
+            lineStyle: {
+              color: "#08567a",
+              width: "2"
+            }
+          },
+          splitLine: {
+            lineStyle: {
+              color: "#08567a"
+            }
+          }
         },
         series: [
           {
@@ -463,7 +491,10 @@ export default {
               color: "#00fffc"
             }
           }
-        ]
+        ],
+        textStyle: {
+          color: "#c6c6c6"
+        }
       },
       checkTrendData: {},
       checkTrendExtend: {
@@ -501,10 +532,25 @@ export default {
             "28",
             "29",
             "30"
-          ]
+          ],
+          axisTick: {
+            show: false
+          }
         },
         yAxis: {
-          type: "value"
+          type: "value",
+          axisLine: {
+            show: true,
+            lineStyle: {
+              color: "#08567a",
+              width: "2"
+            }
+          },
+          splitLine: {
+            lineStyle: {
+              color: "#08567a"
+            }
+          }
         },
         series: [
           {
@@ -568,7 +614,10 @@ export default {
               color: "#00fffc"
             }
           }
-        ]
+        ],
+        textStyle: {
+          color: "#c6c6c6"
+        }
       },
       maleParams: {
         strokeWidth: 10, //线条宽度
@@ -620,7 +669,7 @@ export default {
             // padding: [0, 7],
             rich: {
               a: {
-                color: "#999",
+                color: "#b3dae7",
                 lineHeight: 22,
                 align: "center"
               },
@@ -656,7 +705,7 @@ export default {
       },
       checkInData: {},
       checkInSettings: {
-        xAxisType: 'value'
+        xAxisType: "value"
       },
       checkInExtend: {
         xAxis: {
@@ -669,10 +718,25 @@ export default {
             "15-16点",
             "17-18点",
             "18点以后"
-          ]
+          ],
+          axisTick: {
+            show: false
+          }
         },
         yAxis: {
-          type: "value"
+          type: "value",
+          axisLine: {
+            show: true,
+            lineStyle: {
+              color: "#08567a",
+              width: "2"
+            }
+          },
+          splitLine: {
+            lineStyle: {
+              color: "#08567a"
+            }
+          }
         },
         series: [
           {
@@ -702,6 +766,7 @@ export default {
   },
   async created() {
     let weatherResult = await weather.getWeekWeather();
+    console.log(weatherResult);
     this.weathers = weatherResult.data.data;
     for (let i = 0; i < this.weathers.length; i++) {
       let weather = this.weathers[i];
@@ -709,10 +774,15 @@ export default {
         "iconfont icon-" + this.getWeatherIcon(weather.wea_img);
       weather.monthDay = this.getMonthDay(weather.date);
       weather.dayName = this.getDayName(i, weather.week);
-      if (i == 0) {
-        // this.hoursData.rows = weather.hours;
+      if (i == 1) {
+        this.hoursData.rows = weather.hours;
       }
     }
+    for (let i = 0; i < this.hoursData.rows.length; i++) {
+      let hour = this.hoursData.rows[i];
+      hour.tem = hour.tem.slice(0, hour.tem.length - 1);
+    }
+    console.log(this.hoursData);
   },
   methods: {
     getWeatherIcon(wea_img) {
@@ -750,7 +820,8 @@ export default {
     },
     getMonthDay(date) {
       let eventDate = new Date(date);
-      let monthDay = `${eventDate.getMonth() + 1}月${eventDate.getDate()}日`;
+      let monthDay = `${eventDate.getMonth() + 1}月${eventDate.getDate() -
+        1}日`;
       return monthDay;
     },
     getDayName(num, week) {
@@ -879,6 +950,18 @@ export default {
           height: 165px;
           margin-top: -20px;
           margin-left: -47px;
+          .hour-win {
+            display: flex;
+            justify-content: space-between;
+            margin-top: -98px;
+            text-align: center;
+            font-size: 10px;
+            transform: scale(0.9);
+            width: 98%;
+            margin-left: 5%;
+            .win-div {
+            }
+          }
         }
       }
       .div-trend {
@@ -970,7 +1053,7 @@ export default {
       overflow: hidden;
       .check-in {
         height: 100%;
-            padding: 38px 0px 0px 10px;
+        padding: 38px 0px 0px 10px;
       }
     }
   }
