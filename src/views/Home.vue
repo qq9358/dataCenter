@@ -135,7 +135,7 @@
           </div>
         </div>
         <div class="div-age">
-          <ve-ring :data="ageData" :extend="ageExtend" width="500px" height="350px"></ve-ring>
+          <ve-ring :data="ageData" :extend="ageExtend" width="510px" height="350px"></ve-ring>
         </div>
       </div>
       <div class="bottom-right">
@@ -155,8 +155,11 @@
 
 <script>
 // @ is an alias to /src
-import weather from "@/utils/weather.js";
 import processCircle from "@/components/Circle.vue";
+import weather from "@/utils/weather.js";
+import formatJs from "@/utils/format.js";
+import ticketService from "@/services/ticketService.js";
+import staffService from "@/services/staffService.js";
 
 export default {
   name: "Home",
@@ -256,18 +259,18 @@ export default {
         }
       },
       barData: {
-        columns: ["城市", "人数"],
+        columns: ["name", "value"],
         rows: [
-          { 城市: "深圳", 人数: 593 },
-          { 城市: "广州", 人数: 700 },
-          { 城市: "上海", 人数: 893 },
-          { 城市: "北京", 人数: 993 },
-          { 城市: "杭州", 人数: 1093 }
+          { name: "深圳", value: 593 },
+          { name: "广州", value: 700 },
+          { name: "上海", value: 893 },
+          { name: "北京", value: 993 },
+          { name: "杭州", value: 1093 }
         ]
       },
       barSettings: {
-        dimension: ["城市"],
-        metrics: ["人数"]
+        dimension: ["name"],
+        metrics: ["value"]
       },
       barExtend: {
         series: {
@@ -342,13 +345,13 @@ export default {
         }
       },
       channelData: {
-        columns: ["channel", "money"],
+        columns: ["name", "value"],
         rows: [
-          { channel: "微信", money: "1234.56" },
-          { channel: "官网", money: "2234.56" },
-          { channel: "自助机", money: "3234.56" },
-          { channel: "分销", money: "4234.56" },
-          { channel: "窗口", money: "5234.56" }
+          { name: "微信", value: "1234.56" },
+          { name: "官网", value: "2234.56" },
+          { name: "自助机", value: "3234.56" },
+          { name: "分销", value: "4234.56" },
+          { name: "窗口", value: "5234.56" }
         ]
       },
       channelExtend: {
@@ -761,30 +764,52 @@ export default {
         textStyle: {
           color: "#628ec0"
         }
-      }
+      },
+      todayDate: undefined
     };
   },
   async created() {
-    let weatherResult = await weather.getWeekWeather();
-    console.log(weatherResult);
-    this.weathers = weatherResult.data.data;
-    for (let i = 0; i < this.weathers.length; i++) {
-      let weather = this.weathers[i];
-      weather.iconClass =
-        "iconfont icon-" + this.getWeatherIcon(weather.wea_img);
-      weather.monthDay = this.getMonthDay(weather.date);
-      weather.dayName = this.getDayName(i, weather.week);
-      if (i == 1) {
-        this.hoursData.rows = weather.hours;
-      }
-    }
-    for (let i = 0; i < this.hoursData.rows.length; i++) {
-      let hour = this.hoursData.rows[i];
-      hour.tem = hour.tem.slice(0, hour.tem.length - 1);
-    }
-    console.log(this.hoursData);
+    await this.login();
+    await this.getData();
+    setInterval(async () => {
+      await this.getData();
+    }, 1000 * 60 * 5);
   },
   methods: {
+    async login() {
+      let input = {
+        userName: "admin",
+        password: "admin"
+      };
+      await staffService.loginAsync(input);
+    },
+    async getData() {
+      await this.getWeather();
+      await this.statCheckOverview();
+      await this.statTicketSale();
+      await this.statTourist();
+      await this.statTicketCheck();
+    },
+    async getWeather() {
+      let weatherResult = await weather.getWeekWeather();
+      if (weatherResult.data.data) {
+        this.weathers = weatherResult.data.data;
+        for (let i = 0; i < this.weathers.length; i++) {
+          let weather = this.weathers[i];
+          weather.iconClass =
+            "iconfont icon-" + this.getWeatherIcon(weather.wea_img);
+          weather.monthDay = this.getMonthDay(weather.date);
+          weather.dayName = this.getDayName(i, weather.week);
+          if (i == 1) {
+            this.hoursData.rows = weather.hours;
+          }
+        }
+        for (let i = 0; i < this.hoursData.rows.length; i++) {
+          let hour = this.hoursData.rows[i];
+          hour.tem = hour.tem.slice(0, hour.tem.length - 1);
+        }
+      }
+    },
     getWeatherIcon(wea_img) {
       let iconClass = "";
       switch (wea_img) {
@@ -837,6 +862,234 @@ export default {
       }
 
       return dayName;
+    },
+    async statCheckOverview() {
+      let input = {
+        startDate: "2010-01-01",
+        endDate: "2020-12-12"
+      };
+      let ticketCheckOverviewResult = await ticketService.getTicketCheckOverviewAsync(
+        input
+      );
+      this.realNum = formatJs.formatZero(
+        ticketCheckOverviewResult.scenicRealTimeQuantity,
+        7
+      );
+      this.todayNum = formatJs.formatZero(
+        ticketCheckOverviewResult.scenicCheckInQuantity,
+        7
+      );
+    },
+    async statTicketSale() {
+      let newDate = new Date();
+      this.todayDate = new Date(
+        newDate.getFullYear() +
+          "/" +
+          (newDate.getMonth() + 1) +
+          "/" +
+          newDate.getDate() +
+          " 23:59:59"
+      );
+      await this.statChannelTicketSale();
+      await this.statTodayTicketSale();
+      await this.statYesterTicketSale();
+      await this.statMonthTicketSale();
+    },
+    async statChannelTicketSale() {
+      let monthCTime =
+        this.todayDate.getFullYear() +
+        "-" +
+        (this.todayDate.getMonth() + 1) +
+        "-01";
+      let tradeResult = await this.getDaySaleStat(
+        this.todayDate,
+        monthCTime,
+        7
+      );
+      if (tradeResult.length > 0) {
+        this.channelData.rows = this.getTradeChartData(
+          tradeResult,
+          "statType",
+          "realMoney",
+          "float"
+        );
+      }
+    },
+    async statTodayTicketSale() {
+      let yesterResult = await this.getDaySaleStat(this.todayDate);
+      if (yesterResult.length > 0) {
+        this.todaySale = yesterResult[0]["realMoney"];
+      }
+    },
+    async statYesterTicketSale() {
+      let yesterDate = new Date();
+      yesterDate.setTime(this.todayDate.getTime() - 24 * 60 * 60 * 1000);
+      let yesterResult = await this.getDaySaleStat(yesterDate);
+      if (yesterResult.length > 0) {
+        this.yesterSale = yesterResult[0]["realMoney"];
+      }
+    },
+    async statMonthTicketSale() {
+      let monthCTime =
+        this.todayDate.getFullYear() +
+        "-" +
+        (this.todayDate.getMonth() + 1) +
+        "-01";
+      let tradeResult = await this.getDaySaleStat(
+        this.todayDate,
+        monthCTime,
+        7
+      );
+      if (tradeResult.length > 0) {
+        this.monthSale = tradeResult[0]["realMoney"];
+      }
+    },
+    getTradeChartData(data, nameStr, valueStr, numFormat) {
+      if (nameStr == "statType") {
+        this.monthSale = data[data.length - 1][valueStr];
+      }
+      let rows = [];
+      for (let i = 0; i < data.length - 1; i++) {
+        rows.push({
+          name: data[i][nameStr],
+          value:
+            numFormat == "float"
+              ? formatJs.getFloatNum(data[i][valueStr])
+              : formatJs.getIntNum(data[i][valueStr])
+        });
+      }
+      return rows;
+    },
+    async getDaySaleStat(date, startCTime, statType) {
+      if (startCTime == undefined) {
+        startCTime =
+          date.getFullYear() +
+          "-" +
+          (date.getMonth() + 1) +
+          "-" +
+          date.getDate();
+      }
+      if (statType == undefined) {
+        statType = 3;
+      }
+      let endCTime =
+        date.getFullYear() +
+        "-" +
+        (date.getMonth() + 1) +
+        "-" +
+        date.getDate() +
+        " 23:59:59";
+      let input = {
+        StartCTime: startCTime,
+        EndCTime: endCTime,
+        StatType: statType
+      };
+      let result = await ticketService.statTicketSaleAsync(input);
+      return result;
+    },
+    async statTourist(){
+      let yearDate = new Date();
+      yearDate.setTime(this.todayDate.getTime() - 1000 * 60 * 60 * 24 * 365);
+      await this.statTouristByArea(yearDate);
+      await this.statTouristBySex(yearDate);
+      await this.statTouristByAgeRange(yearDate);
+    },
+    async statTouristByArea(yearDate) {
+      let input = {
+        startCTime: yearDate,
+        endCTime: this.todayDate
+      };
+      let areaResult = await ticketService.statTouristByAreaAsync(input);
+      areaResult.data.push({
+        "地区": "合计",
+        "合计": "无效"
+      })
+      this.barData.rows = this.getTradeChartData(
+        areaResult.data,
+        "地区",
+        "合计"
+      );
+      let yAxisData = [];
+      for(let i=0; i< areaResult.data.length - 1; i++){
+        let dataItem = areaResult.data[i];
+        yAxisData.push({
+          value: dataItem["地区"],
+          textStyle: {
+            color: "#4f73a0"
+          }
+        });
+      }
+      this.barExtend.yAxis.data = yAxisData;
+    },
+    async statTouristBySex(yearDate){
+      let input = {
+        startCTime: yearDate,
+        endCTime: this.todayDate
+      };
+      let sexResult = await ticketService.statTouristBySexAsync(input);
+      this.maleNum = sexResult.data[0].人数;
+      this.femaleNum = sexResult.data[1].人数;
+      this.maleParams.percent = this.maleNum / (this.maleNum + this.femaleNum) * 100;
+      this.femaleParams.percent = this.femaleNum / (this.maleNum + this.femaleNum) * 100;
+      console.log(sexResult);
+    },
+    async statTouristByAgeRange(yearDate){
+      let input = {
+        startCTime: yearDate,
+        endCTime: this.todayDate
+      };
+      let ageRangeResult = await ticketService.statTouristByAgeRangeAsync(input);
+      console.log(ageRangeResult);
+    },
+    async getDayCheckStat(date, startCTime, statType) {
+      if (startCTime == undefined) {
+        startCTime = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+      }
+      if (statType == undefined) {
+        statType = 3;
+      }
+      let endCTime =
+        date.getFullYear() + "/" + (date.getMonth() + 1) + "/" + date.getDate() + " 23:59:59";
+      let result = await ticketService.statTicketCheckInAsync({
+        StartCTime: startCTime,
+        EndCTime: endCTime,
+        StatType: statType
+      });
+      return result;
+    },
+    async statTicketCheck(){
+      let peakResult = await this.getDayCheckStat(this.todayDate, undefined, 1);
+      if (peakResult.data.length > 0) {
+        self.getPeakChartData(peakResult.data);
+      }
+    },
+    getPeakChartData(data) {
+      let rows = [];
+      rows.push({ 时间: "08:00", 人数: this.getIntNum(data[0]["8点前"]) });
+      rows.push({
+        时间: "10:00",
+        人数: this.getIntNum(data[0]["08-09"]) + this.getIntNum(data[0]["09-10"])
+      });
+      for (let i = 12; i < 17; i += 2) {
+        let dataTen = data[0][i - 2 + "-" + (i - 1)];
+        let dataEle = data[0][i - 1 + "-" + i];
+        rows.push({
+          时间: i + ":00",
+          人数: this.getIntNum(dataTen) + this.getIntNum(dataEle)
+        });
+      }
+      rows.push({
+        时间: "18:00",
+        人数:
+          this.getIntNum(data[0]["16-17"]) +
+          this.getIntNum(data[0]["17-18"]) +
+          this.getIntNum(data[0]["18-19"]) +
+          this.getIntNum(data[0]["19-20"]) +
+          this.getIntNum(data[0]["20点后"])
+      });
+      this.checkInExtend.series.data = rows.map((row) => {
+        return row.人数
+      });
     }
   }
 };
@@ -845,8 +1098,8 @@ export default {
 <style lang="scss">
 .div-home {
   background-image: url("../assets/img/background.png");
-  height: 100vh;
-  width: 100vw;
+  height: 1080px;
+  width: 1920px;
   color: #ffffff;
   .home-top {
     height: 9%;
@@ -878,7 +1131,7 @@ export default {
           justify-content: space-between;
         }
         .flow-num {
-          font-size: 48px;
+          font-size: 55px;
           width: 49px;
           text-align: center;
         }
