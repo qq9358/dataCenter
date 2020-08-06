@@ -168,11 +168,11 @@ export default {
   },
   data() {
     return {
-      realNum: "0012345",
-      todayNum: "0123456",
-      todaySale: 1234.56,
-      yesterSale: 2345.67,
-      monthSale: 34567.89,
+      realNum: "0000000",
+      todayNum: "0000000",
+      todaySale: 0,
+      yesterSale: 0,
+      monthSale: 0,
       weathers: [],
       hoursData: {
         columns: ["day", "tem"],
@@ -641,14 +641,14 @@ export default {
         percent3: 80
       },
       ageData: {
-        columns: ["age", "num"],
+        columns: ["name", "value"],
         rows: [
-          { age: "20岁以下", num: "1234" },
-          { age: "20-30岁", num: "2234" },
-          { age: "30-40岁", num: "3234" },
-          { age: "40-50岁", num: "4234" },
-          { age: "50-60岁", num: "5234" },
-          { age: "60岁以上", num: "5234" }
+          { name: "20岁以下", value: "1234" },
+          { name: "20-30岁", value: "2234" },
+          { name: "30-40岁", value: "3234" },
+          { name: "40-50岁", value: "4234" },
+          { name: "50-60岁", value: "5234" },
+          { name: "60岁以上", value: "5234" }
         ]
       },
       ageExtend: {
@@ -987,7 +987,7 @@ export default {
       let result = await ticketService.statTicketSaleAsync(input);
       return result;
     },
-    async statTourist(){
+    async statTourist() {
       let yearDate = new Date();
       yearDate.setTime(this.todayDate.getTime() - 1000 * 60 * 60 * 24 * 365);
       await this.statTouristByArea(yearDate);
@@ -1001,16 +1001,16 @@ export default {
       };
       let areaResult = await ticketService.statTouristByAreaAsync(input);
       areaResult.data.push({
-        "地区": "合计",
-        "合计": "无效"
-      })
+        地区: "合计",
+        合计: "无效"
+      });
       this.barData.rows = this.getTradeChartData(
         areaResult.data,
         "地区",
         "合计"
       );
       let yAxisData = [];
-      for(let i=0; i< areaResult.data.length - 1; i++){
+      for (let i = 0; i < areaResult.data.length - 1; i++) {
         let dataItem = areaResult.data[i];
         yAxisData.push({
           value: dataItem["地区"],
@@ -1021,7 +1021,7 @@ export default {
       }
       this.barExtend.yAxis.data = yAxisData;
     },
-    async statTouristBySex(yearDate){
+    async statTouristBySex(yearDate) {
       let input = {
         startCTime: yearDate,
         endCTime: this.todayDate
@@ -1029,66 +1029,110 @@ export default {
       let sexResult = await ticketService.statTouristBySexAsync(input);
       this.maleNum = sexResult.data[0].人数;
       this.femaleNum = sexResult.data[1].人数;
-      this.maleParams.percent = this.maleNum / (this.maleNum + this.femaleNum) * 100;
-      this.femaleParams.percent = this.femaleNum / (this.maleNum + this.femaleNum) * 100;
-      console.log(sexResult);
+      this.maleParams.percent = parseInt(
+        (this.maleNum / (this.maleNum + this.femaleNum)) * 100
+      );
+      this.femaleParams.percent = parseInt(
+        (this.femaleNum / (this.maleNum + this.femaleNum)) * 100
+      );
     },
-    async statTouristByAgeRange(yearDate){
+    async statTouristByAgeRange(yearDate) {
       let input = {
         startCTime: yearDate,
         endCTime: this.todayDate
       };
-      let ageRangeResult = await ticketService.statTouristByAgeRangeAsync(input);
-      console.log(ageRangeResult);
+      let ageRangeResult = await ticketService.statTouristByAgeRangeSimpleAsync(
+        input
+      );
+      if (ageRangeResult.data.length > 1) {
+        this.ageData.rows = [];
+        ageRangeResult.data.forEach(dataItem => {
+          if (dataItem.ageRange != "未知") {
+            this.ageData.rows.push({
+              name: dataItem.ageRange,
+              value: dataItem.column1
+            });
+          }
+        });
+      }
     },
     async getDayCheckStat(date, startCTime, statType) {
       if (startCTime == undefined) {
-        startCTime = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+        startCTime =
+          date.getFullYear() +
+          "-" +
+          (date.getMonth() + 1) +
+          "-" +
+          date.getDate();
       }
       if (statType == undefined) {
         statType = 3;
       }
       let endCTime =
-        date.getFullYear() + "/" + (date.getMonth() + 1) + "/" + date.getDate() + " 23:59:59";
+        date.getFullYear() +
+        "/" +
+        (date.getMonth() + 1) +
+        "/" +
+        date.getDate() +
+        " 23:59:59";
       let result = await ticketService.statTicketCheckInAsync({
         StartCTime: startCTime,
         EndCTime: endCTime,
-        StatType: statType
+        StatType: statType,
+        ifByGround: true
       });
       return result;
     },
-    async statTicketCheck(){
+    async statTicketCheck() {
       let peakResult = await this.getDayCheckStat(this.todayDate, undefined, 1);
+      console.log(peakResult);
       if (peakResult.data.length > 0) {
-        self.getPeakChartData(peakResult.data);
+        peakResult.data.push({
+          项目: "合计",
+          日期: "--",
+          合计: "0"
+        });
+        let peakResultSum = peakResult.data[peakResult.data.length - 1];
+        peakResult.columns.forEach(column => {
+          console.log(column);
+          if (column != "项目" && column != "日期" && column != "合计") {
+            peakResultSum[column] = 0;
+            peakResult.data.forEach(dataItem => {
+              peakResultSum[column] += dataItem[column];
+            });
+          }
+        });
+        console.log(peakResultSum);
+        let peakSumData = [peakResultSum];
+        this.getPeakChartData(peakSumData);
       }
     },
     getPeakChartData(data) {
       let rows = [];
-      rows.push({ 时间: "08:00", 人数: this.getIntNum(data[0]["8点前"]) });
+      rows.push({ 时间: "08:00", 人数: formatJs.getIntNum(data[0]["8点前"]) });
       rows.push({
         时间: "10:00",
-        人数: this.getIntNum(data[0]["08-09"]) + this.getIntNum(data[0]["09-10"])
+        人数:
+          formatJs.getIntNum(data[0]["08-09"]) +
+          formatJs.getIntNum(data[0]["09-10"])
       });
-      for (let i = 12; i < 17; i += 2) {
+      for (let i = 12; i < 19; i += 2) {
         let dataTen = data[0][i - 2 + "-" + (i - 1)];
         let dataEle = data[0][i - 1 + "-" + i];
         rows.push({
           时间: i + ":00",
-          人数: this.getIntNum(dataTen) + this.getIntNum(dataEle)
+          人数: formatJs.getIntNum(dataTen) + formatJs.getIntNum(dataEle)
         });
       }
       rows.push({
         时间: "18:00",
         人数:
-          this.getIntNum(data[0]["16-17"]) +
-          this.getIntNum(data[0]["17-18"]) +
-          this.getIntNum(data[0]["18-19"]) +
-          this.getIntNum(data[0]["19-20"]) +
-          this.getIntNum(data[0]["20点后"])
+          formatJs.getIntNum(data[0]["18-19"]) +
+          formatJs.getIntNum(data[0]["19-20"]) +
+          formatJs.getIntNum(data[0]["20点后"])
       });
-      this.checkInExtend.series.data = rows.map((row) => {
-        return row.人数
+      this.checkInExtend.series[0].data = rows.map(row => {
+        return row.人数;
       });
     }
   }

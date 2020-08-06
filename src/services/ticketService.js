@@ -18,8 +18,8 @@ export default {
         const response = await ajax.post(`/ticket/StatTouristBySexAsync`, qs.stringify(input));
         return response.result;
     },
-    async statTouristByAgeRangeAsync(input){
-        const response = await ajax.post(`/ticket/StatTouristByAgeRangeAsync`, qs.stringify(input));
+    async statTouristByAgeRangeSimpleAsync(input){
+        const response = await ajax.post(`/ticket/StatTouristByAgeRangeSimpleAsync`, qs.stringify(input));
         return response.result;
     },
     async statTicketCheckInAsync(input){
