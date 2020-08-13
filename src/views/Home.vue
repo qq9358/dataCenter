@@ -164,7 +164,7 @@ import staffService from "@/services/staffService.js";
 export default {
   name: "Home",
   components: {
-    processCircle
+    processCircle,
   },
   data() {
     return {
@@ -184,37 +184,37 @@ export default {
           { day: "5", win: "西南风5级", tem: "25" },
           { day: "6", win: "西南风6级", tem: "36" },
           { day: "7", win: "西南风7级", tem: "27" },
-          { day: "8", win: "西南风8级", tem: "28" }
-        ]
+          { day: "8", win: "西南风8级", tem: "28" },
+        ],
       },
       hoursSettings: {
-        legendName: ""
+        legendName: "",
       },
       hoursExtend: {
         yAxis: {
           show: false,
           axisLine: {
-            show: false
-          }
+            show: false,
+          },
         },
         xAxis: {
-          show: false
+          show: false,
         },
         series: {
           label: {
             show: true,
-            formatter: function(params) {
+            formatter: function (params) {
               return params.data[1] + "℃";
             },
-            color: "#e9e9e9"
+            color: "#e9e9e9",
           },
           lineStyle: {
-            color: "#de5420"
+            color: "#de5420",
           },
           itemStyle: {
-            color: "#de5420"
-          }
-        }
+            color: "#de5420",
+          },
+        },
       },
       maleNum: 1214,
       femaleNum: 1221,
@@ -230,8 +230,8 @@ export default {
           { lat: 110.33119, lng: 20.031971, 人数: 800 },
           { lat: 104.065735, lng: 30.659462, 人数: 700 },
           { lat: 108.948024, lng: 34.263161, 人数: 300 },
-          { lat: 103.823557, lng: 36.058039, 人数: 500 }
-        ]
+          { lat: 103.823557, lng: 36.058039, 人数: 500 },
+        ],
       },
       heatmapSettings: {
         position: "china",
@@ -239,24 +239,24 @@ export default {
         geo: {
           label: {
             emphasis: {
-              show: false
-            }
+              show: false,
+            },
           },
           itemStyle: {
             normal: {
               areaColor: "#323c48",
-              borderColor: "#628d4c"
+              borderColor: "#628d4c",
             },
             emphasis: {
-              areaColor: "#2a333d"
-            }
-          }
-        }
+              areaColor: "#2a333d",
+            },
+          },
+        },
       },
       heatmapExtend: {
         visualMap: {
-          show: false
-        }
+          show: false,
+        },
       },
       barData: {
         columns: ["name", "value"],
@@ -265,12 +265,12 @@ export default {
           { name: "广州", value: 700 },
           { name: "上海", value: 893 },
           { name: "北京", value: 993 },
-          { name: "杭州", value: 1093 }
-        ]
+          { name: "杭州", value: 1093 },
+        ],
       },
       barSettings: {
         dimension: ["name"],
-        metrics: ["value"]
+        metrics: ["value"],
       },
       barExtend: {
         series: {
@@ -285,64 +285,64 @@ export default {
               colorStops: [
                 {
                   offset: 0,
-                  color: "#104a9c" // 0% 处的颜色
+                  color: "#104a9c", // 0% 处的颜色
                 },
                 {
                   offset: 1,
-                  color: "#42eb84" // 100% 处的颜色
-                }
+                  color: "#42eb84", // 100% 处的颜色
+                },
               ],
-              globalCoord: false // 缺省为 false
-            }
+              globalCoord: false, // 缺省为 false
+            },
           },
           label: {
             show: true,
             position: "right",
-            color: "#65eab9"
-          }
+            color: "#65eab9",
+          },
         },
         xAxis: {
-          show: false
+          show: false,
         },
         yAxis: {
           data: [
             {
               value: "杭州",
               textStyle: {
-                color: "#4f73a0"
-              }
+                color: "#4f73a0",
+              },
             },
             {
               value: "广州",
               textStyle: {
-                color: "#4f73a0"
-              }
+                color: "#4f73a0",
+              },
             },
             {
               value: "上海",
               textStyle: {
-                color: "#4f73a0"
-              }
+                color: "#4f73a0",
+              },
             },
             {
               value: "北京",
               textStyle: {
-                color: "#4f73a0"
-              }
+                color: "#4f73a0",
+              },
             },
             {
               value: "深圳",
               textStyle: {
-                color: "#4f73a0"
-              }
-            }
+                color: "#4f73a0",
+              },
+            },
           ],
           axixLine: {
             lineStyle: {
-              color: "#0f0"
-            }
-          }
-        }
+              color: "#0f0",
+            },
+          },
+        },
       },
       channelData: {
         columns: ["name", "value"],
@@ -351,8 +351,8 @@ export default {
           { name: "官网", value: "2234.56" },
           { name: "自助机", value: "3234.56" },
           { name: "分销", value: "4234.56" },
-          { name: "窗口", value: "5234.56" }
-        ]
+          { name: "窗口", value: "5234.56" },
+        ],
       },
       channelExtend: {
         tooltip: {},
@@ -361,20 +361,20 @@ export default {
           top: 130,
           orient: "vertical",
           textStyle: {
-            color: "#628ec0"
-          }
+            color: "#628ec0",
+          },
         },
         series: {
           radius: [58, "43"],
           label: {
-            formatter: function(params) {
+            formatter: function (params) {
               return params.percent + "%";
             },
             textStyle: {
-              color: "#fff"
-            }
-          }
-        }
+              color: "#fff",
+            },
+          },
+        },
       },
       saleTrendData: {},
       saleTrendExtend: {
@@ -411,11 +411,11 @@ export default {
             "27",
             "28",
             "29",
-            "30"
+            "30",
           ],
           axisTick: {
-            show: false
-          }
+            show: false,
+          },
         },
         yAxis: {
           type: "value",
@@ -423,14 +423,14 @@ export default {
             show: true,
             lineStyle: {
               color: "#08567a",
-              width: "2"
-            }
+              width: "2",
+            },
           },
           splitLine: {
             lineStyle: {
-              color: "#08567a"
-            }
-          }
+              color: "#08567a",
+            },
+          },
         },
         series: [
           {
@@ -464,7 +464,7 @@ export default {
               901,
               934,
               1290,
-              1330
+              1330,
             ],
             type: "line",
             areaStyle: {
@@ -477,27 +477,27 @@ export default {
                 colorStops: [
                   {
                     offset: 0,
-                    color: "#01213a" // 0% 处的颜色
+                    color: "#01213a", // 0% 处的颜色
                   },
                   {
                     offset: 1,
-                    color: "#016c8d" // 100% 处的颜色
-                  }
+                    color: "#016c8d", // 100% 处的颜色
+                  },
                 ],
-                globalCoord: false // 缺省为 false
-              }
+                globalCoord: false, // 缺省为 false
+              },
             },
             itemStyle: {
-              color: "#00fffc"
+              color: "#00fffc",
             },
             lineStyle: {
-              color: "#00fffc"
-            }
-          }
+              color: "#00fffc",
+            },
+          },
         ],
         textStyle: {
-          color: "#c6c6c6"
-        }
+          color: "#c6c6c6",
+        },
       },
       checkTrendData: {},
       checkTrendExtend: {
@@ -534,11 +534,11 @@ export default {
             "27",
             "28",
             "29",
-            "30"
+            "30",
           ],
           axisTick: {
-            show: false
-          }
+            show: false,
+          },
         },
         yAxis: {
           type: "value",
@@ -546,14 +546,14 @@ export default {
             show: true,
             lineStyle: {
               color: "#08567a",
-              width: "2"
-            }
+              width: "2",
+            },
           },
           splitLine: {
             lineStyle: {
-              color: "#08567a"
-            }
-          }
+              color: "#08567a",
+            },
+          },
         },
         series: [
           {
@@ -587,7 +587,7 @@ export default {
               901,
               934,
               1290,
-              1330
+              1330,
             ],
             type: "line",
             areaStyle: {
@@ -600,27 +600,27 @@ export default {
                 colorStops: [
                   {
                     offset: 0,
-                    color: "#08222c" // 0% 处的颜色
+                    color: "#08222c", // 0% 处的颜色
                   },
                   {
                     offset: 1,
-                    color: "#207651" // 100% 处的颜色
-                  }
+                    color: "#207651", // 100% 处的颜色
+                  },
                 ],
-                globalCoord: false // 缺省为 false
-              }
+                globalCoord: false, // 缺省为 false
+              },
             },
             itemStyle: {
-              color: "#00fffc"
+              color: "#00fffc",
             },
             lineStyle: {
-              color: "#00fffc"
-            }
-          }
+              color: "#00fffc",
+            },
+          },
         ],
         textStyle: {
-          color: "#c6c6c6"
-        }
+          color: "#c6c6c6",
+        },
       },
       maleParams: {
         strokeWidth: 10, //线条宽度
@@ -629,7 +629,7 @@ export default {
         trailColor: "#0d70c3", //背景线条宽度
         percent: 48, //默认情况下是0
         percent2: 50,
-        percent3: 80
+        percent3: 80,
       },
       femaleParams: {
         strokeWidth: 10, //线条宽度
@@ -638,7 +638,7 @@ export default {
         trailColor: "#de6464", //背景线条宽度
         percent: 52, //默认情况下是0
         percent2: 50,
-        percent3: 80
+        percent3: 80,
       },
       ageData: {
         columns: ["name", "value"],
@@ -648,13 +648,13 @@ export default {
           { name: "30-40岁", value: "3234" },
           { name: "40-50岁", value: "4234" },
           { name: "50-60岁", value: "5234" },
-          { name: "60岁以上", value: "5234" }
-        ]
+          { name: "60岁以上", value: "5234" },
+        ],
       },
       ageExtend: {
         tooltip: {},
         legend: {
-          show: false
+          show: false,
         },
         series: {
           name: "年龄段",
@@ -674,41 +674,41 @@ export default {
               a: {
                 color: "#b3dae7",
                 lineHeight: 22,
-                align: "center"
+                align: "center",
               },
               abg: {
                 backgroundColor: "#0d70c3",
                 width: "100%",
                 align: "right",
                 height: 22,
-                borderRadius: [4, 4, 0, 0]
+                borderRadius: [4, 4, 0, 0],
               },
               hr: {
                 borderColor: "#0f458e",
                 width: "100%",
                 borderWidth: 0.5,
-                height: 0
+                height: 0,
               },
               b: {
                 fontSize: 16,
-                lineHeight: 33
+                lineHeight: 33,
               },
               per: {
                 color: "#eee",
                 backgroundColor: "#0d2fc4",
                 padding: [4, 4, 7, 4],
-                borderRadius: 2
-              }
-            }
+                borderRadius: 2,
+              },
+            },
           },
           labelLine: {
-            length: 20
-          }
-        }
+            length: 20,
+          },
+        },
       },
       checkInData: {},
       checkInSettings: {
-        xAxisType: "value"
+        xAxisType: "value",
       },
       checkInExtend: {
         xAxis: {
@@ -720,11 +720,11 @@ export default {
             "13-14点",
             "15-16点",
             "17-18点",
-            "18点以后"
+            "18点以后",
           ],
           axisTick: {
-            show: false
-          }
+            show: false,
+          },
         },
         yAxis: {
           type: "value",
@@ -732,40 +732,40 @@ export default {
             show: true,
             lineStyle: {
               color: "#08567a",
-              width: "2"
-            }
+              width: "2",
+            },
           },
           splitLine: {
             lineStyle: {
-              color: "#08567a"
-            }
-          }
+              color: "#08567a",
+            },
+          },
         },
         series: [
           {
             data: [820, 932, 901, 934, 1290, 1330, 1320],
             type: "line",
             itemStyle: {
-              color: "#00ffae"
+              color: "#00ffae",
             },
             lineStyle: {
-              color: "#00ffae"
+              color: "#00ffae",
             },
             label: {
-              show: true
+              show: true,
             },
             markLine: {
               lineStyle: {
-                color: "#f00"
-              }
-            }
-          }
+                color: "#f00",
+              },
+            },
+          },
         ],
         textStyle: {
-          color: "#628ec0"
-        }
+          color: "#628ec0",
+        },
       },
-      todayDate: undefined
+      todayDate: undefined,
     };
   },
   async created() {
@@ -779,7 +779,7 @@ export default {
     async login() {
       let input = {
         userName: "admin",
-        password: "admin"
+        password: "admin",
       };
       await staffService.loginAsync(input);
     },
@@ -845,8 +845,9 @@ export default {
     },
     getMonthDay(date) {
       let eventDate = new Date(date);
-      let monthDay = `${eventDate.getMonth() + 1}月${eventDate.getDate() -
-        1}日`;
+      let monthDay = `${eventDate.getMonth() + 1}月${
+        eventDate.getDate() - 1
+      }日`;
       return monthDay;
     },
     getDayName(num, week) {
@@ -866,7 +867,7 @@ export default {
     async statCheckOverview() {
       let input = {
         startDate: "2010-01-01",
-        endDate: "2020-12-12"
+        endDate: "2020-12-12",
       };
       let ticketCheckOverviewResult = await ticketService.getTicketCheckOverviewAsync(
         input
@@ -955,7 +956,7 @@ export default {
           value:
             numFormat == "float"
               ? formatJs.getFloatNum(data[i][valueStr])
-              : formatJs.getIntNum(data[i][valueStr])
+              : formatJs.getIntNum(data[i][valueStr]),
         });
       }
       return rows;
@@ -982,7 +983,7 @@ export default {
       let input = {
         StartCTime: startCTime,
         EndCTime: endCTime,
-        StatType: statType
+        StatType: statType,
       };
       let result = await ticketService.statTicketSaleAsync(input);
       return result;
@@ -997,12 +998,12 @@ export default {
     async statTouristByArea(yearDate) {
       let input = {
         startCTime: yearDate,
-        endCTime: this.todayDate
+        endCTime: this.todayDate,
       };
       let areaResult = await ticketService.statTouristByAreaAsync(input);
       areaResult.data.push({
         地区: "合计",
-        合计: "无效"
+        合计: "无效",
       });
       this.barData.rows = this.getTradeChartData(
         areaResult.data,
@@ -1015,8 +1016,8 @@ export default {
         yAxisData.push({
           value: dataItem["地区"],
           textStyle: {
-            color: "#4f73a0"
-          }
+            color: "#4f73a0",
+          },
         });
       }
       this.barExtend.yAxis.data = yAxisData;
@@ -1024,7 +1025,7 @@ export default {
     async statTouristBySex(yearDate) {
       let input = {
         startCTime: yearDate,
-        endCTime: this.todayDate
+        endCTime: this.todayDate,
       };
       let sexResult = await ticketService.statTouristBySexAsync(input);
       this.maleNum = sexResult.data[0].人数;
@@ -1039,18 +1040,18 @@ export default {
     async statTouristByAgeRange(yearDate) {
       let input = {
         startCTime: yearDate,
-        endCTime: this.todayDate
+        endCTime: this.todayDate,
       };
       let ageRangeResult = await ticketService.statTouristByAgeRangeSimpleAsync(
         input
       );
       if (ageRangeResult.data.length > 1) {
         this.ageData.rows = [];
-        ageRangeResult.data.forEach(dataItem => {
+        ageRangeResult.data.forEach((dataItem) => {
           if (dataItem.ageRange != "未知") {
             this.ageData.rows.push({
               name: dataItem.ageRange,
-              value: dataItem.column1
+              value: dataItem.column1,
             });
           }
         });
@@ -1079,7 +1080,7 @@ export default {
         StartCTime: startCTime,
         EndCTime: endCTime,
         StatType: statType,
-        ifByGround: true
+        ifByGround: true,
       });
       return result;
     },
@@ -1090,14 +1091,14 @@ export default {
         peakResult.data.push({
           项目: "合计",
           日期: "--",
-          合计: "0"
+          合计: "0",
         });
         let peakResultSum = peakResult.data[peakResult.data.length - 1];
-        peakResult.columns.forEach(column => {
+        peakResult.columns.forEach((column) => {
           console.log(column);
           if (column != "项目" && column != "日期" && column != "合计") {
             peakResultSum[column] = 0;
-            peakResult.data.forEach(dataItem => {
+            peakResult.data.forEach((dataItem) => {
               peakResultSum[column] += dataItem[column];
             });
           }
@@ -1114,14 +1115,14 @@ export default {
         时间: "10:00",
         人数:
           formatJs.getIntNum(data[0]["08-09"]) +
-          formatJs.getIntNum(data[0]["09-10"])
+          formatJs.getIntNum(data[0]["09-10"]),
       });
       for (let i = 12; i < 19; i += 2) {
         let dataTen = data[0][i - 2 + "-" + (i - 1)];
         let dataEle = data[0][i - 1 + "-" + i];
         rows.push({
           时间: i + ":00",
-          人数: formatJs.getIntNum(dataTen) + formatJs.getIntNum(dataEle)
+          人数: formatJs.getIntNum(dataTen) + formatJs.getIntNum(dataEle),
         });
       }
       rows.push({
@@ -1129,21 +1130,22 @@ export default {
         人数:
           formatJs.getIntNum(data[0]["18-19"]) +
           formatJs.getIntNum(data[0]["19-20"]) +
-          formatJs.getIntNum(data[0]["20点后"])
+          formatJs.getIntNum(data[0]["20点后"]),
       });
-      this.checkInExtend.series[0].data = rows.map(row => {
+      this.checkInExtend.series[0].data = rows.map((row) => {
         return row.人数;
       });
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style lang="scss">
 .div-home {
   background-image: url("../assets/img/background.png");
-  height: 1080px;
-  width: 1920px;
+  background-size: 100% 100%;
+  height: 100vh;
+  width: 100vw;
   color: #ffffff;
   .home-top {
     height: 9%;
@@ -1162,11 +1164,11 @@ export default {
         width: 100%;
         .flow-real {
           color: #ecb61b;
-          padding: 73px 80px 29px 92px;
+          padding: 68px 80px 29px 92px;
         }
         .flow-today {
           color: #00d1fe;
-          padding: 48px 80px 1px 92px;
+          padding: 40px 80px 1px 92px;
         }
         .flow-div {
           // height: 50%;
